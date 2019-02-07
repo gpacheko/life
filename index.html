@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Game of Life</title>
+	
+
+	
+</head>
+
+<body>
+	
+	
+	<canvas id="c" width="800" height="800"> </canvas> <!--<script src="js/index.js"></script>	-->
+	
+	
+	<script>
+	
+var canvas = document.getElementById("c").getContext("2d");
+var cells = [];
+		
+canvas.strokeStyle = "red";
+canvas.fillStyle = "black";
+
+init();
+
+//initialize game 
+//place pre filled cells to start the simulation 
+function init(){
+	for (var i = 0; i < 34; i++){
+		cells[ i ] = [];
+		for (var j = 0; j < 34; j++){
+			cells[ i ][ j ] = 0;
+		 }
+	 }
+//filled cells
+	
+	[
+		
+		[2, 4],[2, 7],[2,8],[2,13],[3,14],[4,3],[4,5],[4,8],[4,9],[4,10],[4,14],[5,4],[5,9],[5,10]
+		
+	  //[4, 2],[7, 2],[8, 2],[13, 2],[14, 3],[3, 4],[5, 4],[8, 4],[9, 4],[10, 4],[14, 4],[4, 5],[9, 5],[10, 5]
+		
+	]
+	
+       
+   .forEach(function(point) { 
+		console.log(point);
+        cells[point[0]][point[1]] = 1;
+		console.log();
+    });
+	
+	update();
+		
+}
+
+//checks cells if still alive 
+
+function update() {
+    
+    var result = [];
+    
+    /**
+     * Return amount of alive neighbours for a cell
+     */
+    function _countNeighbours(x, y) {
+        var amount = 0;
+        
+        function _isFilled(x, y) {
+            return cells[x] && cells[x][y];
+        }
+        
+        if (_isFilled(x-1, y-1)) amount++;
+        if (_isFilled(x,   y-1)) amount++;
+        if (_isFilled(x+1, y-1)) amount++;
+        if (_isFilled(x-1, y  )) amount++;
+        if (_isFilled(x+1, y  )) amount++;
+        if (_isFilled(x-1, y+1)) amount++;
+        if (_isFilled(x,   y+1)) amount++;
+        if (_isFilled(x+1, y+1)) amount++;
+        
+        return amount;
+    }
+    
+    cells.forEach(function(row, x) {
+        result[x] = [];
+        row.forEach(function(cell, y) {
+            var alive = 0,
+                count = _countNeighbours(x, y);
+            
+            if (cell > 0) {
+                alive = count === 2 || count === 3 ? 1 : 0;
+            } else {
+                alive = count === 3 ? 1 : 0;
+            }
+            
+            result[x][y] = alive;
+        });
+    });
+    
+    cells = result;
+    
+    draw();
+}
+
+/**
+ * Draw cells on canvas
+ */
+function draw() {
+    canvas.clearRect(0, 0, 1512, 512);
+    cells.forEach(function(row, x) {
+        row.forEach(function(cell, y) {
+            canvas.beginPath();
+            canvas.rect(x*8, y*8, 8, 8);
+            if (cell) {
+                canvas.fill();
+            } else {
+                canvas.stroke();
+            }
+        });
+    });
+    setTimeout(function() {update();}, 2000);
+    //window.requestAnimationFrame(update); // Too fast!
+}
+	
+	
+	
+	
+	
+	</script>
+		
+</body>
+</html>
